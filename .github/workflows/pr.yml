@@ -1,0 +1,33 @@
+name: PR
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Go
+        uses: actions/setup-go@v5.4.0
+        with:
+          go-version: '1.24.x'
+      - name: Dependencies
+        run: go mod tidy
+      - name: lint
+        uses: golangci/golangci-lint-action@v7
+        with:
+          version: latest
+          skip-pkg-cache: true
+          skip-build-cache: true
+          args: --timeout=10m
+      - name: test
+        run: make test
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: .tests/coverage.html

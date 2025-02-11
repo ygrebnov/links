@@ -1,0 +1,9 @@
+.idea
+.vscode
+bin
+build
+.coverage
+vendor
+.DS_Store
+/tests/links
+dist/
