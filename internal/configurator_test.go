@@ -34,7 +34,7 @@ func TestConfigurator_New(t *testing.T) {
 		{
 			name: "default",
 			before: func(t *testing.T) injectables {
-				setupEnv(t, "LINKS_INSPECTOR_HOST", "localhost")
+				t.Setenv("LINKS_INSPECTOR_HOST", "localhost")
 
 				return injectables{
 					userConfigDir: func() (string, error) {
@@ -166,7 +166,7 @@ func TestConfigurator_Show(t *testing.T) {
 func TestConfigurator_Set(t *testing.T) {
 	viper.Reset()
 
-	setupEnv(t, "LINKS_INSPECTOR_HOST", "localhost")
+	t.Setenv("LINKS_INSPECTOR_HOST", "localhost")
 
 	tempDir := t.TempDir()
 	var actual string

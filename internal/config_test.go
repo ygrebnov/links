@@ -23,7 +23,7 @@ func TestNewConfig(t *testing.T) {
 		{
 			name: "default",
 			before: func(t *testing.T) injectables {
-				setupEnv(t, "LINKS_INSPECTOR_HOST", "localhost")
+				t.Setenv("LINKS_INSPECTOR_HOST", "localhost")
 
 				return injectables{
 					userConfigDir: func() (string, error) {
@@ -95,7 +95,7 @@ func TestNewConfig(t *testing.T) {
 		{
 			name: "invalid output format",
 			before: func(t *testing.T) injectables {
-				setupEnv(t, "LINKS_PRINTER_OUTPUTFORMAT", "invalid")
+				t.Setenv("LINKS_PRINTER_OUTPUTFORMAT", "invalid")
 
 				return injectables{
 					userConfigDir: func() (string, error) {
@@ -151,7 +151,7 @@ func TestNewConfig(t *testing.T) {
 		{
 			name: "viper.Unmarshal error",
 			before: func(t *testing.T) injectables {
-				setupEnv(t, "LINKS_INSPECTOR_RETRYATTEMPTS", "invalid")
+				t.Setenv("LINKS_INSPECTOR_RETRYATTEMPTS", "invalid")
 
 				return injectables{
 					userConfigDir: func() (string, error) {
