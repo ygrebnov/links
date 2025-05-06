@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"io/fs"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -141,10 +142,12 @@ func TestPrinter(t *testing.T) {
 
 		{
 			name: "error parsing template",
-			before: func(t *testing.T) injectables {
-				t.Chdir(t.TempDir())
-
-				return injectables{}
+			before: func(*testing.T) injectables {
+				return injectables{
+					templateParseFiles: func(_ fs.FS, _ string) (htmlTemplate, error) {
+						return nil, errors.New("error parsing template")
+					},
+				}
 			},
 			cfg: &printerConfig{OutputFormat: outputFormatHTML, DoNotOpenFileReport: true},
 			data: []*link{
@@ -174,7 +177,7 @@ func TestPrinter(t *testing.T) {
 			tempDir: t.TempDir(),
 			before: func(*testing.T) injectables {
 				return injectables{
-					templateParseFiles: func(_ ...string) (htmlTemplate, error) {
+					templateParseFiles: func(_ fs.FS, _ string) (htmlTemplate, error) {
 						return &mockTemplate{
 							executeFn: func(_ io.Writer, _ interface{}) error {
 								return errors.New("error executing template")
@@ -198,7 +201,7 @@ func TestPrinter(t *testing.T) {
 			tempDir: t.TempDir(),
 			before: func(*testing.T) injectables {
 				return injectables{
-					templateParseFiles: func(_ ...string) (htmlTemplate, error) {
+					templateParseFiles: func(_ fs.FS, _ string) (htmlTemplate, error) {
 						return &mockTemplate{
 							executeFn: func(_ io.Writer, _ interface{}) error {
 								panic("panic on executing template")

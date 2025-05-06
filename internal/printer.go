@@ -10,6 +10,8 @@ import (
 	"sort"
 	"strconv"
 	"sync"
+
+	"github.com/ygrebnov/links/templates"
 )
 
 const fallbackToConsoleMsg = "error generating file, printing results to console"
@@ -101,7 +103,7 @@ func (p *defaultPrinter) printAll() {
 
 	defer func() {
 		if ePanic := recover(); ePanic != nil {
-			fmt.Println(fallbackToConsoleMsg)
+			fmt.Println(fallbackToConsoleMsg, ePanic)
 
 			p.cfg.OutputFormat = outputFormatStdOut
 			p.printResults(keys)
@@ -109,7 +111,7 @@ func (p *defaultPrinter) printAll() {
 	}()
 
 	if err := p.generateFile(results); err != nil {
-		fmt.Println(fallbackToConsoleMsg)
+		fmt.Println(fallbackToConsoleMsg, err)
 
 		p.cfg.OutputFormat = outputFormatStdOut
 		p.printResults(keys)
@@ -195,7 +197,7 @@ func (p *defaultPrinter) createFile(name string) (path string, file *os.File, er
 
 // generateHTMLFile generates an HTML file with the results.
 func (p *defaultPrinter) generateHTMLFile(results []*link) (string, error) {
-	t, err := p.deps.getTemplateParseFiles()("templates/links.html")
+	t, err := p.deps.getTemplateParseFiles()(templates.GetLinksTemplate(), "links.html")
 	if err != nil {
 		return "", err
 	}
