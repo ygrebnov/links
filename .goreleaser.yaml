@@ -20,7 +20,7 @@ builds:
       - -s -w -X github.com/ygrebnov/links/internal.version={{.Version}} -X github.com/ygrebnov/links/internal.buildTime={{.Date}}
 
 archives:
-  - format: tar.gz
+  - formats: tar.gz
     # this name template makes the OS and Arch compatible with the results of `uname`.
     name_template: >-
       {{ .ProjectName }}_
@@ -32,7 +32,7 @@ archives:
     # use zip for windows archives
     format_overrides:
       - goos: windows
-        format: zip
+        formats: zip
     files:
       - README.md
       - LICENSE
@@ -56,6 +56,7 @@ brews:
       owner: ygrebnov
       name: homebrew-tap
       token: "{{ .Env.TAP_GITHUB_TOKEN }}"
+    directory: Formula
     goarm: "7"
     commit_author:
       name: ygrebnov
