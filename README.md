@@ -1,12 +1,19 @@
-# Links
+[![Links](https://yaroslavgrebnov.com/assets/images/links_go_tool_for_checking_the_status_of_page_links-a0facf7d8d4e437a00dd689a2a462d58.png)](https://yaroslavgrebnov.com/projects/links/overview)
 
-A Go-based tool for checking pages links statuses at the given host.
+**Links** is a fast and configurable Go tool for checking the status of page links on a given host. Written by [ygrebnov](https://github.com/ygrebnov).
 
-Author: Yaroslav Grebnov, [grebnov@gmail.com](mailto:grebnov@gmail.com).
+---
+
+[![GoDoc](https://pkg.go.dev/badge/github.com/ygrebnov/links)](https://pkg.go.dev/github.com/ygrebnov/links)
+[![Build Status](https://github.com/ygrebnov/links/actions/workflows/build.yml/badge.svg)](https://github.com/ygrebnov/links/actions/workflows/build.yml)
+[![codecov]([![codecov](https://codecov.io/gh/ygrebnov/links/graph/badge.svg?token=7SY34YUHRW)](https://codecov.io/gh/ygrebnov/links))](https://codecov.io/gh/ygrebnov/links)
+[![Go Report Card](https://goreportcard.com/badge/github.com/ygrebnov/links)](https://goreportcard.com/report/github.com/ygrebnov/links)
+
+[User Guide](https://yaroslavgrebnov.com/projects/links/overview) | [Commands](https://yaroslavgrebnov.com/projects/links/usage) | [Configuration](https://yaroslavgrebnov.com/projects/links/configuration) | [Contributing](#contributing)
 
 ## Features
 
-- Inspect links with customizable configurations.
+- Inspect internal and external links with flexible configuration options.
 - Supports multiple output formats: stdout, HTML, and CSV.
 - Supports detailed configuration of pages inspecting and results outputting.
 
@@ -15,12 +22,6 @@ Author: Yaroslav Grebnov, [grebnov@gmail.com](mailto:grebnov@gmail.com).
 **homebrew tap**
 ```shell
 brew install ygrebnov/tap/links
-```
-
-**homebrew**
-```shell
-brew tap ygrebnov/tap
-brew install links
 ```
 
 **go install**
@@ -46,13 +47,13 @@ Start from some other page:
 links inspect --host=example.com --start=/some-page
 ```
 
-Output results to HTML file and open it in the default browser:
+Output results to an HTML file and open it in the default browser:
 
 ```shell
 links inspect --host=example.com -o html
 ```
 
-Do not output results for links returning 200 status code:
+Do not output results for links returning 200 status codes:
 
 ```shell
 links inspect --host=example.com --skipok
@@ -60,44 +61,15 @@ links inspect --host=example.com --skipok
 
 ## Configuration
 
+There are several ways to configure the tool. The configuration can be set using command line options, a dedicated command, environment variables, or a configuration file. See [User Guide Configuration Section](https://yaroslavgrebnov.com/projects/links/configuration) for more details.
+
 Display current configuration:
 
 ```shell
 links config show
 ```
 
-Change configuration using command line. Note that `config set` command results in the configuration being saved to the file. The file is created if it does not exist.
-
-```shell
-links config set printer.skipOK true
-```
-
-Alternatively, configuration can be set via environment variables. The environment variable name is a combination of the command line option name and the `LINKS_` prefix. For example, `printer` `skipOK` setting can be configured using environment variable `LINKS_PRINTER_SKIPOK`.
-
-```shell
-LINKS_PRINTER_SKIPOK=true links inspect --host=example.com
-```
-
-## Configuration options description
-| Option | Description                                                                 | Default value | Environment variable name |
-|--------|-----------------------------------------------------------------------------|---------------|---------------------------|
-| inspector.requestTimeout | HTTP request timeout                                                        | 30s           | `LINKS_INSPECTOR_REQUESTTIMEOUT`        |
-| inspector.doNotFollowRedirects | Do not follow redirects                                                     | false         | `LINKS_INSPECTOR_DONOTFOLLOWREDIRECTS` |
-| inspector.logExternalLinks | Log external links. Links with other hostname are considered to be external | false         | `LINKS_INSPECTOR_LOGEXTERNALLINKS` |
-| inspector.skipStatusCodes | Do not output results for links with the specified status codes             | empty list    | `LINKS_INSPECTOR_SKIPSTATUSCODES`       |
-| inspector.retryAttempts | Number of retry attempts for failed requests                                | 3             | `LINKS_INSPECTOR_RETRYATTEMPTS`         |
-| inspector.retryDelay | Delay between retry attempts                                                | 2ms           | `LINKS_INSPECTOR_RETRYDELAY`           |
-| printer.sortOutput | Sort output by link URL                                                     | false         | `LINKS_PRINTER_SORTOUTPUT`             |
-| printer.displayOccurrences | Display number of occurrences for each link                                 | false         | `LINKS_PRINTER_DISPLAYOCCURRENCES`     |
-| printer.skipOK | Do not output results for links returning 200 status code                   | false         | `LINKS_PRINTER_SKIPOK`                 |
-| printer.outputFormat | Results output format. Supported formats: `stdout`, `html`, `csv`           | stdout        | `LINKS_PRINTER_OUTPUTFORMAT`           |
-| printer.doNotOpenFileReport | Do not open file report in the default browser                              | false         | `LINKS_PRINTER_DONOTOPENFILEREPORT`    |
-
-## Configuration file
-
-One more option is to set configuration using the configuration file in `yaml` format. By default, tool tries to load file from the default location, which is different on each operating system. Exact path is displayed on the first line of `links config show` command output.
-
-The configuration file location can be overridden by specifying the `--config` option.
+Use a custom configuration file:
 
 ```shell
 links inspect --host=example.com --config /path/to/config.yaml
@@ -128,12 +100,13 @@ With `printer.sortOutput` = `false`, `printer.displayOccurrences` = `false`, and
 
 Generated HTML report is opened in the default browser. CSV file is opened in the application associated with .csv files. This behavior can be changed by setting `printer.doNotOpenFileReport` to `true`.
 
-Columns in HTML report can be sorted by clicking on the column header.
+Columns in an HTML report can be sorted by clicking on the column header.
 
 ## Contributing
 
-Contributions are welcome! Please open an issue or submit a pull request.  
+Contributions are welcome!  
+Please open an [issue](https://github.com/ygrebnov/links/issues) or submit a [pull request](https://github.com/ygrebnov/links/pulls).
 
 ## License
 
-This project is licensed under Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
+This project is licensed under Apache License 2.0, see the [LICENSE](LICENSE) file for details.
