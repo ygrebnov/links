@@ -6,6 +6,7 @@ require (
 	github.com/spf13/cobra v1.9.1
 	github.com/spf13/viper v1.19.0
 	github.com/stretchr/testify v1.10.0
+	github.com/ygrebnov/errorc v0.1.0
 	github.com/ygrebnov/workers v0.0.4
 	golang.org/x/net v0.42.0
 	gopkg.in/yaml.v3 v3.0.1
