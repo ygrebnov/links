@@ -175,9 +175,9 @@ func (p *defaultPrinter) generateFile(results []*link) error {
 	var cmd *exec.Cmd
 	switch runtime.GOOS {
 	case "linux":
-		cmd = exec.Command("xdg-open", path)
+		cmd = exec.Command("xdg-open", path) // TODO: use context.
 	case "windows", "darwin":
-		cmd = exec.Command("open", path)
+		cmd = exec.Command("open", path) // TODO: use context.
 	default:
 		return nil
 	}
