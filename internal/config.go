@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/spf13/viper"
+	"github.com/ygrebnov/errorc"
 )
 
 const (
@@ -61,7 +62,7 @@ type config struct {
 }
 
 func (c *config) validate() error {
-	return newCompoundError(
+	return errors.Join(
 		c.validateInspectorHost(),
 		c.validatePrinterOutputFormat(),
 	)
@@ -81,7 +82,7 @@ func (c *config) validateInspectorHost() error {
 	u, err := url.Parse(host)
 	switch {
 	case err != nil || u.Host == "":
-		return ErrInvalidHostValue
+		return ErrInvalidHostValue // TODO: parse error and return more specific error.
 
 	case u.Scheme == "":
 		u.Scheme = "http"
@@ -100,7 +101,10 @@ func (c *config) validatePrinterOutputFormat() error {
 	if c.Printer.OutputFormat != outputFormatStdOut &&
 		c.Printer.OutputFormat != outputFormatHTML &&
 		c.Printer.OutputFormat != outputFormatCSV {
-		return ErrInvalidPrinterOutputFormatValue
+		return errorc.With(
+			ErrInvalidPrinterOutputFormatValue,
+			errorc.Field("value", string(c.Printer.OutputFormat)),
+		)
 	}
 
 	return nil
@@ -114,7 +118,7 @@ func newConfig(cfgFile string, deps injectables) (*config, error) {
 	} else {
 		var err error
 		if cfgFile, err = getConfigFilePath(false, deps); err != nil {
-			return nil, newCompoundError(err)
+			return nil, err
 		}
 
 		_, err = deps.getStat()(cfgFile)
@@ -124,7 +128,7 @@ func newConfig(cfgFile string, deps injectables) (*config, error) {
 			viper.SetConfigFile(cfgFile)
 
 		case !errors.Is(err, fs.ErrNotExist):
-			return nil, newCompoundError(err)
+			return nil, err
 
 		default:
 			// file is created only on configurator.set
@@ -140,13 +144,13 @@ func newConfig(cfgFile string, deps injectables) (*config, error) {
 
 	if withFile {
 		if err := viper.ReadInConfig(); err != nil {
-			return nil, newCompoundError(ErrInvalidConfigurationSettings)
+			return nil, ErrInvalidConfigurationSettings // TODO: parse viper error and return more specific error.
 		}
 	}
 
 	var cfg *config
 	if err := viper.Unmarshal(&cfg); err != nil {
-		return nil, newCompoundError(ErrInvalidConfigurationSettings)
+		return nil, ErrInvalidConfigurationSettings // TODO: parse viper error and return more specific error.
 	}
 
 	err := cfg.validate()
