@@ -18,7 +18,7 @@ import (
 )
 
 type inspector interface {
-	inspect(startPath string, done chan<- struct{})
+	inspect(ctx context.Context, startPath string, done chan<- struct{})
 }
 
 type defaultInspector struct {
@@ -68,8 +68,8 @@ func newInspector(
 	}, nil
 }
 
-func (i *defaultInspector) inspect(startPath string, done chan<- struct{}) {
-	ctx, cancel := context.WithCancel(context.Background())
+func (i *defaultInspector) inspect(ctx context.Context, startPath string, done chan<- struct{}) {
+	ctx, cancel := context.WithCancel(ctx)
 
 	i.htmlProvider = workers.New[*link](ctx, &workers.Config{MaxWorkers: uint(runtime.NumCPU()), StartImmediately: true})
 	i.htmlParser = workers.New[[]string](ctx, &workers.Config{MaxWorkers: uint(runtime.NumCPU()), StartImmediately: true})
@@ -165,10 +165,13 @@ func (i *defaultInspector) newGetHTMLTask(path string) func(ctx context.Context)
 
 		attempts := byte(0)
 		for attempts < i.cfg.RetryAttempts {
-			header := make(http.Header)
-			header.Add("User-Agent", applicationName+"/"+version)
+			req, err1 := http.NewRequestWithContext(ctx, http.MethodGet, u.String(), http.NoBody)
+			if err1 != nil {
+				return i.store(&link{URL: u.String(), code: statusError})
+			}
+			req.Header.Add("User-Agent", applicationName+"/"+version)
 
-			resp, err2 := i.httpClient.Do(&http.Request{URL: u, Header: header})
+			resp, err2 := i.httpClient.Do(req)
 			switch {
 			case err2 != nil && errors.Is(err2, syscall.ECONNRESET):
 				select {
@@ -202,9 +205,7 @@ func (i *defaultInspector) store(l *link) *link {
 func (i *defaultInspector) newGetLinksTask(data io.ReadCloser) func(ctx context.Context) ([]string, error) {
 	// TODO: pass url to return in error.
 	return func(ctx context.Context) ([]string, error) {
-		defer func(data io.ReadCloser) {
-			_ = data.Close()
-		}(data)
+		defer data.Close()
 
 		var (
 			doc *html.Node

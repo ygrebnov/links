@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"context"
 	"encoding/csv"
 	"fmt"
 	"os"
@@ -17,7 +18,7 @@ import (
 const fallbackToConsoleMsg = "error generating file, printing results to console"
 
 type printer interface {
-	run(toPrint <-chan *link, finalize <-chan struct{}, done chan<- struct{})
+	run(ctx context.Context, toPrint <-chan *link, finalize <-chan struct{}, done chan<- struct{})
 }
 
 type defaultPrinter struct {
@@ -35,7 +36,12 @@ func newPrinter(cfg *printerConfig, deps injectables, data *sync.Map) printer {
 	return &defaultPrinter{cfg: cfg, deps: deps, data: data}
 }
 
-func (p *defaultPrinter) run(toPrint <-chan *link, finalize <-chan struct{}, done chan<- struct{}) {
+func (p *defaultPrinter) run(
+	ctx context.Context,
+	toPrint <-chan *link,
+	finalize <-chan struct{},
+	done chan<- struct{},
+) {
 	go func() {
 		for {
 			select {
@@ -46,7 +52,7 @@ func (p *defaultPrinter) run(toPrint <-chan *link, finalize <-chan struct{}, don
 			case <-finalize:
 				p.wg.Wait() // wait for all p.printOne to finish.
 
-				p.printAll()
+				p.printAll(ctx)
 
 				done <- struct{}{}
 			}
@@ -80,7 +86,7 @@ func (p *defaultPrinter) printOne(l *link) {
 	_, _ = p.deps.getPrintFn()(p.getStatus(l.code), "-", l.URL)
 }
 
-func (p *defaultPrinter) printAll() {
+func (p *defaultPrinter) printAll(ctx context.Context) {
 	if !p.cfg.SortOutput &&
 		!p.cfg.DisplayOccurrences &&
 		!p.cfg.OutputFormat.isFile() {
@@ -110,7 +116,7 @@ func (p *defaultPrinter) printAll() {
 		}
 	}()
 
-	if err := p.generateFile(results); err != nil {
+	if err := p.generateFile(ctx, results); err != nil {
 		fmt.Println(fallbackToConsoleMsg, err)
 
 		p.cfg.OutputFormat = outputFormatStdOut
@@ -145,7 +151,7 @@ func (p *defaultPrinter) printResults(keys sortableURLs) []*link {
 	return results
 }
 
-func (p *defaultPrinter) generateFile(results []*link) error {
+func (p *defaultPrinter) generateFile(ctx context.Context, results []*link) error {
 	if !p.cfg.OutputFormat.isFile() {
 		return nil
 	}
@@ -175,9 +181,9 @@ func (p *defaultPrinter) generateFile(results []*link) error {
 	var cmd *exec.Cmd
 	switch runtime.GOOS {
 	case "linux":
-		cmd = exec.Command("xdg-open", path) // TODO: use context.
+		cmd = exec.CommandContext(ctx, "xdg-open", path) // TODO: use context.
 	case "windows", "darwin":
-		cmd = exec.Command("open", path) // TODO: use context.
+		cmd = exec.CommandContext(ctx, "open", path) // TODO: use context.
 	default:
 		return nil
 	}

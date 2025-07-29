@@ -1,10 +1,14 @@
 package internal
 
 import (
+	"context"
 	"fmt"
 	"net"
 	"net/http"
+	"os"
+	"os/signal"
 	"sync"
+	"syscall"
 	"time"
 )
 
@@ -17,6 +21,9 @@ func Inspect(cfgFile, startURL string) error {
 	if cfgErr != nil {
 		return fmt.Errorf("cannot load configuration: %w", cfgErr)
 	}
+
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	defer stop()
 
 	doneInspecting := make(chan struct{}, 1)
 	donePrinting := make(chan struct{}, 1)
@@ -49,9 +56,9 @@ func Inspect(cfgFile, startURL string) error {
 		return fmt.Errorf("cannot initialize inspector: %w", err)
 	}
 
-	newPrinter(&cfg.Printer, injectables{}, data).run(toPrint, doneInspecting, donePrinting)
+	newPrinter(&cfg.Printer, injectables{}, data).run(ctx, toPrint, doneInspecting, donePrinting)
 
-	i.inspect(startURL, doneInspecting)
+	i.inspect(ctx, startURL, doneInspecting)
 
 	<-donePrinting
 

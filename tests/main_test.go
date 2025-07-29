@@ -1,6 +1,7 @@
 package tests
 
 import (
+	"context"
 	"fmt"
 	"os/exec"
 	"strings"
@@ -98,7 +99,7 @@ func TestE2E(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			out, err := exec.Command("./links", test.args...).CombinedOutput()
+			out, err := exec.CommandContext(context.Background(), "./links", test.args...).CombinedOutput()
 
 			switch {
 			case test.expectedError != "":
