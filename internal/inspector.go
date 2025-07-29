@@ -197,6 +197,9 @@ func (i *defaultInspector) newGetHTMLTask(path string) func(ctx context.Context)
 
 func (i *defaultInspector) store(l *link) *link {
 	if _, loaded := i.visitedURLs.LoadOrStore(l.URL, l); loaded {
+		if l.body != nil {
+			_ = l.body.Close()
+		}
 		return nil
 	}
 	return l
