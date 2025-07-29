@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"io"
@@ -248,7 +249,7 @@ func TestPrinter(t *testing.T) {
 			donePrinting := make(chan struct{}, 1)
 			toPrint := make(chan *link, 1024)
 
-			p.run(toPrint, doneInspecting, donePrinting)
+			p.run(context.Background(), toPrint, doneInspecting, donePrinting)
 
 			for _, l := range test.data {
 				data.Store(l.URL, l)

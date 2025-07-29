@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"io"
@@ -547,7 +548,7 @@ func TestInspector(t *testing.T) {
 				}
 			}()
 
-			i.inspect("start", doneInspecting)
+			i.inspect(context.Background(), "start", doneInspecting)
 
 			<-done
 			wg.Wait()
