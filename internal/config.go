@@ -103,7 +103,7 @@ func (c *config) validatePrinterOutputFormat() error {
 		c.Printer.OutputFormat != outputFormatCSV {
 		return errorc.With(
 			ErrInvalidPrinterOutputFormatValue,
-			errorc.Field("value", string(c.Printer.OutputFormat)),
+			errorc.String("value", string(c.Printer.OutputFormat)),
 		)
 	}
 
