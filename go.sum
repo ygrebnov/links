@@ -41,14 +41,10 @@ github.com/stretchr/testify v1.11.1 h1:7s2iGBzp5EwR7/aIZr8ao5+dra3wiQyKjjFuvgVKu
 github.com/stretchr/testify v1.11.1/go.mod h1:wZwfW3scLgRK+23gO65QZefKpKQRnfz6sD981Nm4B6U=
 github.com/subosito/gotenv v1.6.0 h1:9NlTDc1FTs4qu0DDq7AEtTPNw6SVm7uBMsUCUjABIf8=
 github.com/subosito/gotenv v1.6.0/go.mod h1:Dk4QP5c2W3ibzajGcXpNraDfq2IrhjMIvMSWPKKo0FU=
-github.com/ygrebnov/errorc v0.1.0 h1:X7Dlft1vJmjYlyZWwuOUAuJ1740OKezGOwIeZB/0Pho=
-github.com/ygrebnov/errorc v0.1.0/go.mod h1:ZWIoKi7bFsUqZYtkz8HfX+EDc3KJH9H382ncEe1YdBs=
 github.com/ygrebnov/errorc v0.3.0 h1:QtaYoyYGMoPZTsbojjp6ar5hnobt60u0wcxY2DqPG40=
 github.com/ygrebnov/errorc v0.3.0/go.mod h1:jD0xEfIlM+EuFGU3z5DPRBL1l8zm3T+hYBh1L0t1UCg=
-github.com/ygrebnov/workers v0.0.4 h1:1+G5ra0X5b5qTeW1ShQy2SN4Geh/EynP+ZTQzBqd8Ps=
-github.com/ygrebnov/workers v0.0.4/go.mod h1:lLrJhBrNGeiPtBnKSh5P4CA3bUxeGoPNvI+ut/OD6Ng=
-github.com/ygrebnov/workers v0.1.0 h1:BAAgFHiRsoYGrrHzsgXIRQdjqBDuXI6uFABYgttK8Po=
-github.com/ygrebnov/workers v0.1.0/go.mod h1:KLf+UYqCvUTc0ubW5hPbLQVgd9LGJiyBzPTpB/u2C5U=
+github.com/ygrebnov/workers v0.5.2 h1:pFaTGAFLjEcdJMZBHHZNmALvC9t1tAEu5c4EeKXJlvg=
+github.com/ygrebnov/workers v0.5.2/go.mod h1:EB1R0bpEh54heEvL3vAqo1URqsbHyVHqUGI/mulhmns=
 go.yaml.in/yaml/v3 v3.0.4 h1:tfq32ie2Jv2UxXFdLJdh3jXuOzWiL1fo0bu/FbuKpbc=
 go.yaml.in/yaml/v3 v3.0.4/go.mod h1:DhzuOOF2ATzADvBadXxruRBLzYTpT36CKvDb3+aBEFg=
 golang.org/x/net v0.44.0 h1:evd8IRDyfNBMBTTY5XRF1vaZlD+EmWx6x8PkhR04H/I=
